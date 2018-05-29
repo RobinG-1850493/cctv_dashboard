@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script type="text/javascript">
+        function sendId(id) {
+            $("#stream_img").attr("src", "http://192.168.3.161:8080/stream?topic=/stream_" + id)
+        }
+
+        function algorithmImage(id, name) {
+            setTimeout(function () {
+                $("#stream_img").attr("src", "http://192.168.3.161:8080/stream?topic=/" + name + "_" + id)
+            }, 5000)
+        }
+
+        var ros = new ROSLIB.Ros({
+            url : 'ws://localhost:9090'
+        });
+
+        ros.on('connection', function() {
+            console.log('Connected to websocket server.');
+        });
+
+        ros.on('error', function(error) {
+            console.log('Error connecting to websocket server: ', error); window.alert('Error connecting to websocket server');
+        });
+
+        ros.on('close', function() {
+            console.log('Connection to websocket server closed.');
+        });
+
+        var middlemanPublish = new ROSLIB.Topic({
+            ros : ros,
+            name : '/middleman',
+            messageType : 'std_msgs/String'
+        });
+        var middlemanQuitPublish = new ROSLIB.Topic({
+            ros : ros,
+            name : '/middleman_quit',
+            messageType : 'std_msgs/String'
+        });
+
+        function publishMsg(msg) {
+            middlemanPublish.publish(msg)
+            console.log("Done")
+        }
+
+        function publishQuit(msg) {
+            middlemanQuitPublish.publish(msg)
+            console.log("Done")
+        }
+
+        function sendMessage(checkbox) {
+            id_stream = $("#stream_img").attr('src')
+            id = id_stream.substr(id_stream.length - 1)
+            console.log(id)
+            console.log("chk")
+            if(checkbox.value == "OpenPose"){
+                if(checkbox.checked == true){
+                    var msg = new ROSLIB.Message({
+                        data : "openpose " + id
+                    });
+                    publishMsg(msg)
+                    algorithmImage(id, "openpose")
+                }
+                else if (checkbox.checked == false){
+                    var msg = new ROSLIB.Message({
+                        data : "op_quit"
+                    });
+                    publishQuit(msg)
+                    sendId(id)
+                }
+            }
+            else if(checkbox.value == "Tracking") {
+                if(checkbox.checked == true){
+                    var msg = new ROSLIB.Message({
+                        data : "tracking " + id
+                    });
+                    publishMsg(msg)
+                    algorithmImage(id, "tracking")
+                }
+                else if (checkbox.checked == false){
+                    var msg = new ROSLIB.Message({
+                        data : "tr_quit"
+                    });
+                    publishQuit(msg)
+                    sendId(id)
+                }
+            }
+            else if(checkbox.value == "Non-AI"){
+                if(checkbox.checked == true){
+
+                }
+                else{
+
+                }
+            }
+        }
+
+        function closeAll(){
+            var msg = new ROSLIB.Message({
+                data : "op_quit"
+            });
+            publishQuit(msg)
+
+            var msg = new ROSLIB.Message({
+                data : "tr_quit"
+            });
+            publishQuit(msg)
+        }
+    </script>
+</head>
+<body>
+<h2 class="text-center">Video-feeds</h2>
+<div>
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-12">
+                <h1 class="page-header">Thumbnail Gallery</h1>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="1" id="stream_1" onclick="sendId(1)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_1">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="2" id="stream_2" onclick="sendId(2)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_2">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="3" id="stream_3" onclick="sendId(3)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_3">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="4" id="stream_4" onclick="sendId(4)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_4">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="5" id="stream_5" onclick="sendId(5)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_5">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="6" id="stream_6" onclick="sendId(6)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_6">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="7" id="stream_7" onclick="sendId(1)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_1">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="8" id="stream_8" onclick="sendId(2)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_2">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="9" id="stream_9" onclick="sendId(3)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_3">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="10" id="stream_10" onclick="sendId(4)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_4">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="11" id="stream_11" onclick="sendId(5)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_5">
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail this_placeholder" href="#">
+                    <img data-toggle="modal" data-target="#stream_modal" data-topic="12" id="stream_12" onclick="sendId(6)" class="stream_img" src="http://192.168.3.161:8080/stream?topic=/stream_6">
+                </a>
+            </div>
+        </div>
+
+        <hr>
+    <div class="modal fade" id="stream_modal" tabindex="-1" role="dialog" aria-labelledby="streamModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="streamModalLabel">Algorithms</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <div class="form-group">
+                            <img class="modal_image" id="stream_img">
+                        </div>
+                        <div class="form-group">
+                            <div class="btn-group mr-4" data-toggle="buttons">
+                                <label class="btn btn-primary active form-check-label">
+                                    <input id="chk_op" value="OpenPose" type="checkbox" class="form-check-input" onchange="sendMessage(this)"> OpenPose
+                                </label>
+
+                                <label class="btn btn-primary form-check-label">
+                                    <input id="chk_tr" value="Tracking" type="checkbox" class="form-check-input" onchange="sendMessage(this)"> Tracking-with-darkflow
+                                </label>
+
+                                <label class="btn btn-primary form-check-label">
+                                    <input id="chk_na" value="Non-AI" type="checkbox" class="form-check-input" onchange="sendMessage(this)"> Non-AI
+                                </label>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeAll()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="row">
+        <div class="col-lg-12">
+            <p>Robin Goos</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
