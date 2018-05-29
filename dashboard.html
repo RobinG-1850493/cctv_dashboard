@@ -17,7 +17,7 @@
         function algorithmImage(id, name) {
             setTimeout(function () {
                 $("#stream_img").attr("src", "http://192.168.3.161:8080/stream?topic=/" + name + "_" + id)
-            }, 5000)
+            }, 10000)
         }
 
         var ros = new ROSLIB.Ros({
