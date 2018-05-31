@@ -57,11 +57,13 @@
         });
 
         streams.subscribe(function (message) {
-            if (message.data.indexOf('stream') >= 0)
-                if (typeof message.data !== "undefined")
-                    console.log(message.data)
-            stream_id = message.data.split('_');
-            addStream(stream_id[1]);
+            if (message.data.indexOf('stream') >= 0) {
+                console.log(message.data)
+                stream_id = message.data.split('_');
+                if (typeof stream_id !== "undefined" && stream_id !== null) {
+                    addStream(stream_id[1]);
+                }
+            }
         })
 
         var middlemanPublish = new ROSLIB.Topic({
